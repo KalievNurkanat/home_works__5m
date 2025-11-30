@@ -4,13 +4,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import *
 from .serializers import *
+from django.db.models import Avg
+from django.db.models import Count
 # Create your views here.
 
 # Categories
 @api_view(http_method_names=["GET"])
 def category_api_list_view(request):
     # step 1: Collect films from DB(QuerySet)
-    categories = Category.objects.all()
+    categories = Category.objects.all().annotate(products_count=Count("product"))
 
     # step 2: Reformat QuerySet to list of dictionaries (Serializers)
     list_ = CategoryListSerializers(instance=categories, many=True).data
@@ -44,7 +46,6 @@ def product_api_list_view(request):
         status = status.HTTP_200_OK,
     )
 
-
 @api_view(["GET"])
 def product_detail_api_view(request, id):
     try:
@@ -68,7 +69,6 @@ def review_api_list_view(request):
         status = status.HTTP_200_OK,
     )
 
-
 @api_view(["GET"])
 def review_detail_api_view(request, id):
     try:
@@ -80,4 +80,9 @@ def review_detail_api_view(request, id):
     return Response(data=item, status=status.HTTP_200_OK)
     
 
-    
+@api_view(["GET"])
+def product_review_api_view(request):
+    queryset = Product.objects.all().annotate(average_rating=Avg("review__stars"))
+    serializer_class = ProductRevSerializer(instance=queryset, many=True).data
+    return Response(data=serializer_class, status=status.HTTP_200_OK)
+

@@ -6,6 +6,7 @@ class Category(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+    
 
 
 class Product(models.Model):
@@ -16,10 +17,16 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+    
+    
 
+STARS = (
+    (i, "*" * i) for i in range(1, 11)
+)
 
 class Review(models.Model):
     text = models.TextField(null=True, blank=True)
+    stars = models.IntegerField(choices=STARS, default=10)
     product = models.ForeignKey(Product, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
