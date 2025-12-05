@@ -45,6 +45,7 @@ class ProductRevSerializer(serializers.ModelSerializer):
             return 0
         return round(obj.average_rating, 2)
     
+    
     def get_reviews(self, obj):
         qs = obj.review_set.all()
         return ReviewListSerializers(qs, many=True).data
@@ -55,6 +56,7 @@ class ReviewListSerializers(serializers.ModelSerializer):
      class Meta:
         model = Review
         fields = ["text", "stars"]
+
 
 class ReviewDetailSerializers(serializers.ModelSerializer):
      class Meta:
