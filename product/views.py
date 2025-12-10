@@ -6,13 +6,13 @@ from .models import *
 from .serializers import *
 from django.db.models import Avg
 from django.db.models import Count
-# Create your views here.
+
 
 # Categories
 @api_view(http_method_names=["GET", "POST"])
 def category_api_list_view(request):
     if request.method == "GET":
-        # step 1: Collect films from DB(QuerySet)
+        # step 1: Collect products from DB(QuerySet)
         categories = Category.objects.all().annotate(products_count=Count("product"))
 
         # step 2: Reformat QuerySet to list of dictionaries (Serializers)
@@ -25,7 +25,11 @@ def category_api_list_view(request):
         )
     
     elif request.method == "POST":
-        name = request.data.get("name")
+        category_validate = CategoryValidateSerializer(data=request.data)
+        if not category_validate.is_valid():
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=category_validate.errors)
+        
+        name = category_validate.validated_data.get("name")
         category = Category.objects.create(
             name=name
             )
@@ -69,10 +73,15 @@ def product_api_list_view(request):
         )
     
     elif request.method == "POST":
-        title = request.data.get("title")
-        description = request.data.get("description")
-        price = request.data.get("price")
-        category_id = request.data.get("category_id")
+        product_validate = ProductValidateSerializers(data=request.data)
+        if not product_validate.is_valid():
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=product_validate.errors)
+        
+        
+        title = product_validate.validated_data.get("title")
+        description = product_validate.validated_data.get("description")
+        price = product_validate.validated_data.get("price")
+        category_id = product_validate.validated_data.get("category_id")
 
         product = Product.objects.create(
             title=title, description=description, price=price, category_id=category_id,
@@ -122,9 +131,14 @@ def review_api_list_view(request):
         )
     
     elif request.method == "POST":
-        text = request.data.get("text")
-        stars = request.data.get("stars")
-        product_id = request.data.get("product_id")
+        review_validate = ReviewValidateSerializers(data=request.data)
+        if not review_validate.is_valid():
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=review_validate.errors)
+        
+        
+        text = review_validate.validated_data.get("text")
+        stars = review_validate.validated_data.get("stars")
+        product_id = review_validate.validated_data.get("product_id")
         
         review = Review.objects.create(
             text=text, stars=stars, product_id=product_id,

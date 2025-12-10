@@ -1,22 +1,23 @@
 from rest_framework import serializers
 from .models import *
+from rest_framework.serializers import ValidationError
 
-
+# Category
 class CategoryListSerializers(serializers.ModelSerializer):
     products_count = serializers.IntegerField()
     class Meta:
         model = Category
         fields = ["id", "name", "products_count"]
 
-    def get_product_count(self, product):
-        return product.count_product()
-
-
 
 class CategoryDetailSerializers(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = "__all__"
+
+
+class CategoryValidateSerializer(serializers.Serializer):
+    name = serializers.CharField(min_length=5, max_length=30)
 
 
 # Product
@@ -30,6 +31,7 @@ class ProductDetailSerializers(serializers.ModelSerializer):
      class Meta:
         model = Product
         fields = "__all__"
+
 
 class ProductRevSerializer(serializers.ModelSerializer):
     average_rating = serializers.FloatField()
@@ -49,6 +51,21 @@ class ProductRevSerializer(serializers.ModelSerializer):
     def get_reviews(self, obj):
         qs = obj.review_set.all()
         return ReviewListSerializers(qs, many=True).data
+    
+
+class ProductValidateSerializers(serializers.Serializer):
+    title = serializers.CharField(min_length=5, max_length=255)
+    description = serializers.CharField(max_length=200, required=False)
+    price = serializers.IntegerField()
+    category_id = serializers.IntegerField()
+
+    def validate_category_id(self, category_id):
+        try:
+            Category.objects.get(id=category_id)
+        except Category.DoesNotExist:
+            raise ValidationError("Category doesnt exists")
+        return category_id
+
 
 
 # Review
@@ -62,3 +79,16 @@ class ReviewDetailSerializers(serializers.ModelSerializer):
      class Meta:
         model = Review
         fields = "__all__"
+
+
+class ReviewValidateSerializers(serializers.Serializer):
+    text = serializers.CharField(max_length=200)
+    stars = serializers.IntegerField(min_value=1, max_value=10)
+    product_id = serializers.IntegerField()
+
+    def validate_product_id(self, product_id):
+        try:
+            Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            raise ValidationError("Product doesnt exists")
+        return product_id
