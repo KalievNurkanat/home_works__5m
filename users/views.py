@@ -50,7 +50,10 @@ def authorization_api_view(request):
 
 @api_view(["DELETE"])
 def delete_user(request, id):
-    user = User.objects.get(id=id)
+    try:
+       user = User.objects.get(id=id)
+    except User.DoesNotExist:
+        return Response(data={"no such user":"user not found"})
 
     user.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
