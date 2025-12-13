@@ -26,7 +26,6 @@ def registration_api_view(request):
     code = str(random.randint(100000, 999999))
     ConfirmCode.objects.create(user=user, code=code)
 
-    # optionally return code for testing
     return Response(
         {"message": "User created", "confirmation_code": code},
         status=status.HTTP_201_CREATED

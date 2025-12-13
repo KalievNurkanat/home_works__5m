@@ -31,7 +31,6 @@ class UserRegisterSerializer(serializers.Serializer):
 
         return user
 
-
 class UserAuthSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=20)
     password = serializers.CharField()
@@ -45,6 +44,3 @@ class UserAuthSerializer(serializers.Serializer):
 
 class ConfirmCodeSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=6)
-
-
-
