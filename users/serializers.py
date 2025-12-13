@@ -17,20 +17,6 @@ class UserRegisterSerializer(serializers.Serializer):
             raise serializers.ValidationError("Username already exists")
         return username   
 
-    def create(self, validated_data):
-        password = validated_data.pop("password")
-        user = User.objects.create(
-            username=validated_data["username"],
-            is_active=False
-        )
-        user.set_password(password)
-        user.save()
-
-        code = str(random.randint(100000, 999999))
-        ConfirmCode.objects.create(user=user, code=code)
-
-        return user
-
 class UserAuthSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=20)
     password = serializers.CharField()
