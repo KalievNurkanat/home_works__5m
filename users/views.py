@@ -64,13 +64,18 @@ def confirmation_api_view(request):
     confirm_code.is_valid(raise_exception=True)
 
     code = confirm_code.validated_data["code"]
+    user_id = confirm_code.validated_data["user_id"]
 
     try:
-        confirm = ConfirmCode.objects.get(code=code)
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        raise ValidationError("User does not exist")
+
+    try:
+        ConfirmCode.objects.get(code=code, user=user_id)
     except ConfirmCode.DoesNotExist:
         return Response({"error": "Неверный код"}, status=400)
 
-    user = confirm.user
     user.is_active = True
     user.save()
 

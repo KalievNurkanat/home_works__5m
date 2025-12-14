@@ -30,3 +30,4 @@ class UserAuthSerializer(serializers.Serializer):
 
 class ConfirmCodeSerializer(serializers.Serializer):
     code = serializers.CharField(max_length=6)
+    user_id = serializers.IntegerField()
