@@ -10,10 +10,11 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path("category/", views.category_api_list_view),
-    path("category/<int:id>/", views.category_detail_api_view),
-    path("product/", views.product_api_list_view),
-    path("product/<int:id>/", views.product_detail_api_view),
-    path("review/", views.review_api_list_view),
-    path("review/<int:id>/", views.review_detail_api_view)
+    path("categories/", views.CategoryListView.as_view()),
+    path("categories/<int:id>/", views.CategoryDetailView.as_view()),
+    path("", views.ProductListView.as_view()),
+    path("<int:id>/", views.ProductDetialView.as_view()),
+    path("reviews/", views.ReviewListView.as_view()),
+    path("reviews/<int:id>/", views.ReviewDetailView.as_view()),
+    path("ratings/", views.ProductReviewsListView.as_view())
 ]
