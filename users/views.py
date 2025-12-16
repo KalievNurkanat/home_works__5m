@@ -1,84 +1,46 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.generics import *
+from users.serializers import *
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from users.models import *
 from rest_framework import status
-from .serializers import *
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
-from rest_framework.authtoken.models import Token
-
-from .models import ConfirmCode
 # Create your views here.
 
-@api_view(["POST"])
-def registration_api_view(request):
-    registrate = UserRegisterSerializer(data=request.data)
-    registrate.is_valid(raise_exception=True)
 
-    username = registrate.validated_data["username"]
-    password = registrate.validated_data["password"]
-
-    user = User.objects.create_user(
-        username=username, password=password,
-        is_active=False
-    )
-      
-    code = str(random.randint(100000, 999999))
-    ConfirmCode.objects.create(user=user, code=code)
-
-    return Response(
-        {"message": "User created", "confirmation_code": code},
-        status=status.HTTP_201_CREATED
-    )
+class RegisterView(CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegisterSerializer
 
 
-@api_view(["POST"])
-def authorization_api_view(request):
-    authentication = UserAuthSerializer(data=request.data)
-    authentication.is_valid(raise_exception=True)
+class UserAuthView(APIView):
+    def post(self, request):
+        serializer = UserAuthSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-    username = authentication.validated_data["username"]
-    password = authentication.validated_data["password"]
+        user = serializer.validated_data["user"]
+        token, _ = Token.objects.get_or_create(user=user)
 
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        token, created = Token.objects.get_or_create(user=user)
-        return Response(data={"key":token.key})
-    return Response(status=status.HTTP_401_UNAUTHORIZED)
-    
-
-@api_view(["DELETE"])
-def delete_user(request, id):
-    try:
-       user = User.objects.get(id=id)
-    except User.DoesNotExist:
-        return Response(data={"no such user":"user not found"})
-
-    user.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"token": token.key})
 
 
-@api_view(["POST"])
-def confirmation_api_view(request):
-    confirm_code = ConfirmCodeSerializer(data=request.data)
-    confirm_code.is_valid(raise_exception=True)
+class ConfirmCodeView(APIView):
+    def post(self, request):
+        serializer = ConfirmCodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-    code = confirm_code.validated_data["code"]
-    user_id = confirm_code.validated_data["user_id"]
+        code = serializer.validated_data["code"]
+        
+        try:
+            conf = ConfirmCode.objects.get(code=code)
+        except ConfirmCode.DoesNotExist:
+            raise ValidationError("Invalid password or user not found")
+        
+        user = conf.user
+        user.is_active = True
+        user.save()
+        user.is_active = True
 
-    try:
-        user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        raise ValidationError("User does not exist")
-
-    try:
-        ConfirmCode.objects.get(code=code, user=user_id)
-    except ConfirmCode.DoesNotExist:
-        return Response({"error": "Неверный код"}, status=400)
-
-    user.is_active = True
-    user.save()
+        return Response(data={"message":"user confirmed"}, status=200)
 
 
-    return Response({"message": "Аккаунт подтверждён"}, status=status.HTTP_202_ACCEPTED)
 
