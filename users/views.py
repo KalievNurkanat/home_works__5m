@@ -38,7 +38,6 @@ class ConfirmCodeView(APIView):
         user = conf.user
         user.is_active = True
         user.save()
-        user.is_active = True
 
         return Response(data={"message":"user confirmed"}, status=200)
 

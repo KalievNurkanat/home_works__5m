@@ -12,8 +12,11 @@ from rest_framework.views import APIView
 
 class CategoryListView(ListAPIView, CreateAPIView):
     queryset = Category.objects.annotate(products_count=Count("product"))
-    serializer_class = CategoryListSerializers
-
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return CategoryListSerializers
+        return CategoryDetailSerializers
+    
 
 class CategoryDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.annotate(products_count=Count("product"))
@@ -23,7 +26,11 @@ class CategoryDetailView(RetrieveUpdateDestroyAPIView):
 # Products
 class ProductListView(ListAPIView, CreateAPIView):
     queryset = Product.objects.all()
-    serializer_class = ProductListSerializers
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return ProductListSerializers
+        return ProductDetailSerializers
+    
 
 class ProductDetialView(RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
@@ -40,8 +47,11 @@ class ProductReviewsListView(ListAPIView):
 # Review
 class ReviewListView(ListAPIView, CreateAPIView):
     queryset = Review.objects.all()
-    serializer_class = ReviewListSerializers
-
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return ReviewListSerializers
+        return ReviewDetailSerializers
+    
 class ReviewDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewDetailSerializers
