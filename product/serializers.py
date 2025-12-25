@@ -3,6 +3,11 @@ from .models import *
 from rest_framework.serializers import ValidationError
 
 # Category
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username"]
+
 class CategoryListSerializers(serializers.ModelSerializer):
     products_count = serializers.IntegerField()
     class Meta:
@@ -23,7 +28,8 @@ class ProductListSerializers(serializers.ModelSerializer):
 
 
 class ProductDetailSerializers(serializers.ModelSerializer):
-     class Meta:
+    poster = UserSerializer(read_only=True)
+    class Meta:
         model = Product
         fields = "__all__"
 
@@ -31,24 +37,25 @@ class ProductDetailSerializers(serializers.ModelSerializer):
 # Review
 class ReviewListSerializers(serializers.ModelSerializer):
     product_id = serializers.IntegerField(required=True)
+    poster = UserSerializer(read_only=True)
 
     class Meta:
         model = Review
         fields = ["id", "text", "stars", "product_id"]
 
-    def create(self, validated_data):
-        product_id = validated_data.pop("product_id")
+    # def create(self, validated_data):
+    #     product_id = validated_data.pop("product_id")
 
-        try:
-            product = Product.objects.get(id=product_id)
-        except Product.DoesNotExist:
-            raise ValidationError(
-                {"product_id": "Product not found"}
-            )
-        return Review.objects.create(
-            product=product,
-            **validated_data
-        )
+    #     try:
+    #         product = Product.objects.get(id=product_id)
+    #     except Product.DoesNotExist:
+    #         raise ValidationError(
+    #             {"product_id": "Product not found"}
+    #         )
+    #     return Review.objects.create(
+    #         product=product,
+    #         **validated_data
+    #     )
 
 
 class ProductReviewsSerializer(serializers.ModelSerializer):
@@ -64,14 +71,13 @@ class ProductReviewsSerializer(serializers.ModelSerializer):
             return 0
         return round(obj.rating, 2)
     
-
     def get_review(self, obj):
         qs = obj.review_set.all()
         return ReviewListSerializers(qs, many=True).data
     
 
-
 class ReviewDetailSerializers(serializers.ModelSerializer):
-     class Meta:
+    poster = UserSerializer(read_only=True)
+    class Meta:
         model = Review
         fields = "__all__"
