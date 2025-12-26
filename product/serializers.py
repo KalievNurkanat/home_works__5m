@@ -1,11 +1,12 @@
 from rest_framework import serializers
 from .models import *
 from rest_framework.serializers import ValidationError
+from users.models import *
 
 # Category
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = CustomUser
         fields = ["id", "username"]
 
 class CategoryListSerializers(serializers.ModelSerializer):
