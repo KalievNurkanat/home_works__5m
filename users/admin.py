@@ -11,6 +11,6 @@ class CustomUserAdmin(UserAdmin):
     list_display = ("id", "email", "is_active")
     ordering = ("email",)
     fieldsets = (
-        (None, {"fields": ("email","phone_number", "password", "is_active")}),
+        (None, {"fields": ("email", "phone_number", "password", "is_active")}),
         ("Important dates", {"fields": ("last_login",)}),
     )

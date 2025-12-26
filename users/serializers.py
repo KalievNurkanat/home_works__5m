@@ -19,7 +19,7 @@ class AuthValidateSerializer(UserBaseSerializer):
 
 class UserRegisterSerializer(UserBaseSerializer):
     def validate_username(self, username):
-        if User.objects.filter(username=username).exists():
+        if CustomUser.objects.filter(username=username).exists():
             raise serializers.ValidationError("Username already exists")
         return username 
     

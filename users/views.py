@@ -30,7 +30,7 @@ class RegisterView(CreateAPIView):
             # Create a random 6-digit code
         code = ''.join(random.choices(string.digits, k=6))
 
-        confirmation_code = ConfirmationCode.objects.create(
+        ConfirmCode.objects.create(
                 user=user,
                 code=code
             )

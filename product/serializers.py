@@ -23,9 +23,10 @@ class CategoryDetailSerializers(serializers.ModelSerializer):
 
 # Product
 class ProductListSerializers(serializers.ModelSerializer):
-     class Meta:
+    poster = UserSerializer(read_only=True)
+    class Meta:
         model = Product
-        fields = ["id", "title"]
+        fields = ["id", "title", 'poster']
 
 
 class ProductDetailSerializers(serializers.ModelSerializer):
