@@ -17,10 +17,13 @@ class RegisterView(CreateAPIView):
 
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
+        phone_number = serializer.validated_data['phone_number']
+
 
         user = CustomUser.objects.create_user(
                 email=email,
                 password=password,
+                phone_number=phone_number,
                 is_active=False
             )
 
