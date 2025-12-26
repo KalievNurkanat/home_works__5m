@@ -12,7 +12,7 @@ class RegisterView(CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegisterSerializer
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = UserRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         email = serializer.validated_data['email']
@@ -27,8 +27,8 @@ class RegisterView(CreateAPIView):
                 is_active=False
             )
 
-            # Create a random 6-digit code
-        code = ''.join(random.choices(string.digits, k=6))
+        user.save()
+        code = str(random.randint(100000, 999999))
 
         ConfirmCode.objects.create(
                 user=user,
