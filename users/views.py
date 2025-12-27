@@ -45,7 +45,7 @@ class RegisterView(CreateAPIView):
             }
         )
 
-# короче эта штука внизу не сработает я его еще не настраивал под кастомов
+
 class UserAuthView(CreateAPIView):
     serializer_class = UserAuthSerializer
     def post(self, request):
