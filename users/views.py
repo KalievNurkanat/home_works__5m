@@ -14,13 +14,15 @@ class RegisterView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = UserRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
+         
+        user = serializer.validated_data['username']
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
         phone_number = serializer.validated_data['phone_number']
 
 
         user = CustomUser.objects.create_user(
+                username=user,
                 email=email,
                 password=password,
                 phone_number=phone_number,

@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate
 
 
 class UserBaseSerializer(serializers.Serializer):
-    phone_number = serializers.IntegerField(min_value=100, max_value=10000000)
+    username = serializers.CharField()
+    phone_number = serializers.IntegerField(min_value=100, max_value=9999999999)
     email = serializers.EmailField()
     password = serializers.CharField()
 
@@ -32,12 +33,14 @@ class UserRegisterSerializer(UserBaseSerializer):
 
 
 class UserAuthSerializer(serializers.Serializer):
-    username = serializers.CharField(max_length=20)
+    user = serializers.CharField()
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
     def validate(self, data):
         user = authenticate(
-            username=data["username"],
+            user=data["user"],
+            email=data["email"],
             password=data["password"]
         )
 
