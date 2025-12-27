@@ -23,9 +23,9 @@ class RegisterView(CreateAPIView):
 
         user = CustomUser.objects.create_user(
                 username=user,
+                phone_number=phone_number,
                 email=email,
                 password=password,
-                phone_number=phone_number,
                 is_active=False
             )
 
