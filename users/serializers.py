@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate
 
 class UserBaseSerializer(serializers.Serializer):
     username = serializers.CharField()
-    phone_number = serializers.IntegerField(min_value=100, max_value=9999999999)
+    phone_number = serializers.IntegerField(required=False, default=996)
     email = serializers.EmailField()
     password = serializers.CharField()
 
