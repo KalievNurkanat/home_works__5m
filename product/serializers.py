@@ -43,7 +43,7 @@ class ReviewListSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = ["id", "text", "stars", "product_id"]
+        fields = ["id", "text", "stars", "product_id", "poster"]
 
     # def create(self, validated_data):
     #     product_id = validated_data.pop("product_id")
