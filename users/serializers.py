@@ -10,12 +10,11 @@ class UserBaseSerializer(serializers.Serializer):
     username = serializers.CharField()
     phone_number = serializers.CharField(required=False, default="+996")
     email = serializers.EmailField()
-    password = serializers.CharField()
+    password = serializers.CharField(write_only=True)
 
 
 class AuthValidateSerializer(UserBaseSerializer):
     pass
-
 
 
 class UserRegisterSerializer(UserBaseSerializer):
@@ -30,7 +29,19 @@ class UserRegisterSerializer(UserBaseSerializer):
         except:
             return email
         raise ValidationError('CustomUser уже существует!')
+    
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(
+            email=validated_data["email"],
+            password=validated_data["password"],
+            phone_number=validated_data.get("phone_number"),
+            username=validated_data.get("username"),
+            is_active=False,    
+            is_staff=True
+        )
 
+        return user
+    
 
 class UserAuthSerializer(serializers.Serializer):
     user = serializers.CharField()

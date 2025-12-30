@@ -2,16 +2,9 @@ from .models import *
 from .serializers import *
 from django.db.models import Avg
 from django.db.models import Count
-from rest_framework.permissions import *
 from rest_framework.generics import *
+from common.permissions import *
 # Categories
-
-class OwnerRights(BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if request.method in SAFE_METHODS:
-            return True
-        return obj.poster == request.user
-
 
 class CategoryListView(ListCreateAPIView):
     queryset = Category.objects.annotate(products_count=Count("product"))
@@ -31,7 +24,7 @@ class CategoryDetailView(RetrieveUpdateDestroyAPIView):
 # Products
 class ProductListView(ListCreateAPIView):
     queryset = Product.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsModerator]
     def get_serializer_class(self):
         if self.request.method == "GET":
             return ProductListSerializers
@@ -42,7 +35,7 @@ class ProductListView(ListCreateAPIView):
     
 
 class ProductDetialView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly, OwnerRights]
+    permission_classes = [ IsModerator]
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializers
     lookup_field = "id"

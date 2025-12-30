@@ -16,7 +16,7 @@ class Product(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     price = models.IntegerField()
-    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE)
+    category_id = models.ForeignKey(Category, null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.title}"    

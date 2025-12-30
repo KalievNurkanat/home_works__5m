@@ -16,7 +16,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault("is_active", True)
           
         if not re.match(r'^\+996\d{9}$', phone_number):
-            raise ValueError("+996 is required")
+            raise ValueError("+996 is left or no 9 digits")
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:

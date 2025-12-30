@@ -4,31 +4,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from users.models import *
 from rest_framework.authtoken.models import Token
-from rest_framework import status
 # Create your views here.
 
 
 class RegisterView(CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegisterSerializer
-    def post(self, request, *args, **kwargs):
-        serializer = UserRegisterSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-         
-        user = serializer.validated_data['username']
-        email = serializer.validated_data['email']
-        password = serializer.validated_data['password']
-        phone_number = serializer.validated_data['phone_number']
-
-
-        user = CustomUser.objects.create_user(
-                username=user,
-                phone_number=phone_number,
-                email=email,
-                password=password,
-                is_active=False
-            )
-
+    def perform_create(self, serializer):
+        user = serializer.save()
         user.save()
         code = str(random.randint(100000, 999999))
 
@@ -36,14 +19,6 @@ class RegisterView(CreateAPIView):
                 user=user,
                 code=code
             )
-
-        return Response(
-            status=status.HTTP_201_CREATED,
-            data={
-                'user_id': user.id,
-                'confirmation_code': code
-            }
-        )
 
 
 class UserAuthView(CreateAPIView):
