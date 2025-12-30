@@ -22,5 +22,4 @@ class IsModerator(BasePermission):
     def has_permission(self, request, view):
         if request.method == "POST" and request.user.is_staff:
             return False
-        if request.method == "DELETE" or request.method == "PUT" or request.method == "GET" :
-            return True
+        return True
