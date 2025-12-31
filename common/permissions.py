@@ -2,10 +2,14 @@ from rest_framework.permissions import *
 from users.models import CustomUser
 
 
-class OwnerRights(BasePermission):
+class IsOwnerOrModerator(BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in SAFE_METHODS:
             return True
+        
+        if request.user.is_staff == True:
+            return True
+        
         return obj.poster == request.user
     
 
@@ -22,4 +26,3 @@ class IsModerator(BasePermission):
     def has_permission(self, request, view):
         if request.method == "POST" and request.user.is_staff:
             return False
-        return True

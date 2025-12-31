@@ -1,9 +1,10 @@
-from rest_framework.generics import *
-from users.serializers import *
-from rest_framework.views import APIView
+from rest_framework.generics import CreateAPIView
+from users.serializers import UserRegisterSerializer, UserAuthSerializer, ConfirmCodeSerializer
 from rest_framework.response import Response
-from users.models import *
+from users.models import CustomUser, ConfirmCode
 from rest_framework.authtoken.models import Token
+import random
+from rest_framework.exceptions import ValidationError
 # Create your views here.
 
 

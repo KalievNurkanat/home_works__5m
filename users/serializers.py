@@ -1,8 +1,6 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
-import random
-from users.models import *
+from users.models import CustomUser
 from django.contrib.auth import authenticate
 
 
@@ -27,8 +25,8 @@ class UserRegisterSerializer(UserBaseSerializer):
         try:
             CustomUser.objects.get(email=email)
         except:
-            return email
-        raise ValidationError('CustomUser уже существует!')
+            raise ValidationError('CustomUser уже существует!')
+        return email
     
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
@@ -36,8 +34,7 @@ class UserRegisterSerializer(UserBaseSerializer):
             password=validated_data["password"],
             phone_number=validated_data.get("phone_number"),
             username=validated_data.get("username"),
-            is_active=False,    
-            is_staff=True
+            is_active=False
         )
 
         return user
