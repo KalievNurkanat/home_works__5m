@@ -25,8 +25,9 @@ class UserRegisterSerializer(UserBaseSerializer):
         try:
             CustomUser.objects.get(email=email)
         except:
-            raise ValidationError('CustomUser уже существует!')
-        return email
+            return email
+
+        raise ValidationError('CustomUser уже существует!')
     
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
