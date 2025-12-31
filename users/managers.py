@@ -1,20 +1,22 @@
 from django.contrib.auth.models import BaseUserManager
 import re
 class CustomUserManager(BaseUserManager):
-    def create_user(self, email, phone_number=None, password=None, **extra_fields):
+    def create_user(self, email,username ,phone_number=None, password=None, **extra_fields):
         if not email:
             raise ValueError("Email is required!")
         email = self.normalize_email(email)
-        user = self.model(email=email,phone_number=phone_number, **extra_fields)
+        user = self.model(email=email,username=username, phone_number=phone_number, **extra_fields)
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, phone_number, email, password=None, **extra_fields):
+    def create_superuser(self, phone_number, email, username, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
           
+        if not username:
+            raise ValueError("Username is required")
         if not re.match(r'^\+996\d{9}$', phone_number):
             raise ValueError("+996 is left or no 9 digits")
         if extra_fields.get("is_staff") is not True:
@@ -23,4 +25,4 @@ class CustomUserManager(BaseUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
         if extra_fields.get("is_active") is not True:
             raise ValueError("Superuser must have is_active=True.")
-        return self.create_user(email, phone_number, password, **extra_fields)
+        return self.create_user(email,username, phone_number, password, **extra_fields)
