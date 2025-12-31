@@ -30,7 +30,7 @@ class CategoryDetailView(RetrieveUpdateDestroyAPIView):
 # Products
 class ProductListView(ListCreateAPIView):
     queryset = Product.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly | IsModerator]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsModerator]
     def get_serializer_class(self):
         if self.request.method == "GET":
             return ProductListSerializers
@@ -66,7 +66,7 @@ class ReviewListView(ListCreateAPIView):
         serializer.save(poster=self.request.user)
     
 class ReviewDetailView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrModerator]
+    permission_classes = [IsOwnerOrModerator]
     queryset = Review.objects.all()
     serializer_class = ReviewDetailSerializers
     lookup_field = "id" 

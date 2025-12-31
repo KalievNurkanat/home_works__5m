@@ -26,3 +26,4 @@ class IsModerator(BasePermission):
     def has_permission(self, request, view):
         if request.method == "POST" and request.user.is_staff:
             return False
+        return True
