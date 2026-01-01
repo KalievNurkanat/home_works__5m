@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from .models import *
-from rest_framework.serializers import ValidationError
-from users.models import *
+from product.models import Category, Product, Review
+from users.models import CustomUser
 
 # Category
 class UserSerializer(serializers.ModelSerializer):

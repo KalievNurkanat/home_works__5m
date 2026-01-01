@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from shop_api.settings import AUTH_USER_MODEL
-
+from common.models import BaseModel
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=200)
@@ -11,7 +11,7 @@ class Category(models.Model):
     
 
 
-class Product(models.Model):
+class Product(BaseModel):
     poster = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)

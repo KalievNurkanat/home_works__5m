@@ -9,12 +9,14 @@ from product.serializers import (CategoryListSerializers,
 from django.db.models import Avg
 from django.db.models import Count
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
-from common.permissions import IsOwnerOrModerator, IsAuthenticatedOrReadOnly, IsModerator
+from common.permissions import IsOwnerOrModerator, IsAuthenticatedOrReadOnly, IsModerator, CanEditIn, CanCreateProduct
+from common.validators import validate_age
+from rest_framework.exceptions import ValidationError
 # Categories
 
 class CategoryListView(ListCreateAPIView):
     queryset = Category.objects.annotate(products_count=Count("product"))
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsModerator]
     def get_serializer_class(self):
         if self.request.method == "GET":
             return CategoryListSerializers
@@ -22,7 +24,7 @@ class CategoryListView(ListCreateAPIView):
     
 
 class CategoryDetailView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [(IsAuthenticatedOrReadOnly and CanEditIn) | IsModerator]
     queryset = Category.objects.annotate(products_count=Count("product"))
     serializer_class = CategoryDetailSerializers
     lookup_field = "id"
@@ -30,18 +32,22 @@ class CategoryDetailView(RetrieveUpdateDestroyAPIView):
 # Products
 class ProductListView(ListCreateAPIView):
     queryset = Product.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly, IsModerator]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsModerator, CanCreateProduct]
     def get_serializer_class(self):
         if self.request.method == "GET":
             return ProductListSerializers
         return ProductDetailSerializers
     
     def perform_create(self, serializer):
+        validate_age(self.request.user)
         serializer.save(poster=self.request.user)
+        price = serializer.validated_data["price"]
+        if price <= 5:
+            raise ValidationError("Price should be more than 5")
+        
     
-
 class ProductDetialView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsOwnerOrModerator]
+    permission_classes = [(IsOwnerOrModerator and CanEditIn) | IsModerator]
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializers
     lookup_field = "id"
