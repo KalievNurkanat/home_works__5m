@@ -18,7 +18,7 @@ class UserBaseSerializer(serializers.Serializer):
     phone_number = serializers.CharField(required=False, default="+996")
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
-    # birthday = serializers.DateField()
+    birthday = serializers.DateField()
 
 
 class AuthValidateSerializer(UserBaseSerializer):
@@ -45,7 +45,7 @@ class UserRegisterSerializer(UserBaseSerializer):
             password=validated_data["password"],
             phone_number=validated_data.get("phone_number"),
             username=validated_data.get("username"),
-            # birthday=validated_data.get("birthday"),
+            birthday=validated_data.get("birthday"),
             is_active=False
         )
 
