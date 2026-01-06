@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 def validate_age(user):
     if not user.birthday:
-        return ValidationError("enter birthdate")
+        return ValidationError("Укажите дату рождения")
     
     birthday = user.birthday
     today = datetime.date.today()

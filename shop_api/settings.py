@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,6 +49,7 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 3,
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
@@ -87,11 +89,16 @@ WSGI_APPLICATION = 'shop_api.wsgi.application'
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS':{
-        'Token':{
+        'TokenAuth':{
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'headers',
             'description': 'Token <ur token>'
+        },
+        'JWToken':{
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'headers'
         }
     }
 }
@@ -146,3 +153,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "users.CustomUser"
+
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    "UPDATE_LAST_LOGIN": False,
+}

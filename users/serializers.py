@@ -2,7 +2,16 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from users.models import CustomUser
 from django.contrib.auth import authenticate
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+class CustomJWTSerilizer(TokenObtainPairSerializer):
+    
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token["birthday"] = user.birthday.isoformat()
+
+        return token
 
 class UserBaseSerializer(serializers.Serializer):
     username = serializers.CharField()

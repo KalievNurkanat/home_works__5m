@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import User
 from shop_api.settings import AUTH_USER_MODEL
 from common.models import BaseModel
 # Create your models here.

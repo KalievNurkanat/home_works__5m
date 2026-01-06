@@ -1,12 +1,18 @@
 from rest_framework.generics import CreateAPIView
-from users.serializers import UserRegisterSerializer, UserAuthSerializer, ConfirmCodeSerializer
+from users.serializers import (UserRegisterSerializer,
+                                UserAuthSerializer,
+                                  ConfirmCodeSerializer,
+                                    CustomJWTSerilizer)
 from rest_framework.response import Response
 from users.models import CustomUser, ConfirmCode
 from rest_framework.authtoken.models import Token
 import random
 from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.views import TokenObtainPairView
 # Create your views here.
 
+class CustomJWTView(TokenObtainPairView):
+    serializer_class = CustomJWTSerilizer
 
 class RegisterView(CreateAPIView):
     queryset = CustomUser.objects.all()
