@@ -47,9 +47,10 @@ class ConfirmCodeView(CreateAPIView):
         serializer.is_valid(raise_exception=True)
 
         code = serializer.validated_data["code"]
+        users = serializer.validated_data["user_id"]
         
         try:
-            conf = ConfirmCode.objects.get(code=code)
+            conf = ConfirmCode.objects.get(code=code, user_id=users)
         except ConfirmCode.DoesNotExist:
             raise ValidationError("Invalid password or user not found")
         

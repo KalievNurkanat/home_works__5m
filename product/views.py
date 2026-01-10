@@ -39,7 +39,8 @@ class ProductListView(ListCreateAPIView):
         return ProductDetailSerializers
     
     def perform_create(self, serializer):
-        validate_age(self.request.user)
+        token = self.request.auth 
+        validate_age(token)
         serializer.save(poster=self.request.user)
         price = serializer.validated_data["price"]
         if price <= 5:
@@ -47,7 +48,7 @@ class ProductListView(ListCreateAPIView):
         
     
 class ProductDetialView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [(IsOwnerOrModerator and CanEditIn) | IsModerator]
+    permission_classes = [(IsOwnerOrModerator & CanEditIn) | IsModerator]
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializers
     lookup_field = "id"
