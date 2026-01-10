@@ -3,6 +3,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from users.serializers import OauthCodeSerializer
 import os
 
@@ -55,6 +56,8 @@ class GoogleLoginAPIView(CreateAPIView):
                 "is_active": True,
     }
         )
+        user.last_login = timezone.now()
+        user.save(update_fields=["last_login"])
 
         if not created:
             if not user.first_name or not user.last_name:
