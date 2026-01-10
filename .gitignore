@@ -146,3 +146,5 @@ __marimo__/
 .streamlit/secrets.toml
 db.sqlite3
 .idea
+
+google-scopes.txt
