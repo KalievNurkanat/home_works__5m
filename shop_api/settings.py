@@ -93,20 +93,18 @@ SWAGGER_SETTINGS = {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'headers',
-            'description': 'Token <ur token>'
-        },
-        'JWToken':{
-            'type': 'apiKey',
-            'name': 'Authorization',
-            'in': 'headers'
         }
     }
 }
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get("DB_NAME"),
+                'PASSWORD': os.environ.get("DB_PASSWORD"),
+                'USER': os.environ.get("DB_USER"),
+                'PORT': os.environ.get("DB_PORT"),
+                'HOST': os.environ.get("DB_HOST"),
     }
 }
 
@@ -162,4 +160,14 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/10',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient'
+        }
+    } 
 }

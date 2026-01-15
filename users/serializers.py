@@ -4,6 +4,8 @@ from users.models import CustomUser
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+class CodeRedisSerilizer(serializers.Serializer):
+    code = serializers.CharField()
 
 class OauthCodeSerializer(serializers.Serializer):
     code  = serializers.CharField()
