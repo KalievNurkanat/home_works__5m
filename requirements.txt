@@ -1,9 +1,11 @@
 asgiref==3.11.0
+cache==1.0.3
 certifi==2026.1.4
 charset-normalizer==3.4.4
 Django==5.2.8
 django-dotenv==1.4.2
 django-jazzmin==3.0.1
+django-redis==6.0.0
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 drf-yasg==1.21.11
@@ -15,6 +17,7 @@ psycopg2-binary==2.9.11
 PyJWT==2.10.1
 pytz==2025.2
 PyYAML==6.0.3
+redis==7.1.0
 requests==2.32.5
 sqlparse==0.5.3
 uritemplate==4.2.0
