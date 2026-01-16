@@ -3,6 +3,7 @@ from rest_framework.generics import CreateAPIView
 from users.serializers import CodeRedisSerilizer
 from rest_framework.response import Response
 from django.core.cache import cache
+from rest_framework.exceptions import ValidationError
 
 def generate_confirmation_code(user_id: int, code:str):
     key = f"Confirmation_code:{user_id}"
@@ -27,11 +28,14 @@ class GenerateConfirmaitonCode(CreateAPIView):
         user = request.user
 
         code = str(random.randint(100000, 999999))
-        generate_confirmation_code(user.id, code)
+        if not user.is_authenticated:
+            raise ValidationError("u need to authorize")
+        
+        generate_confirmation_code(user.id, code) 
+           
 
         return Response(data={"Code saved. Check the Redis"}, status=200)
     
-
 class CheckConfirmationCode(CreateAPIView):
     serializer_class = CodeRedisSerilizer
     def post(self, request):
